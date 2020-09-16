@@ -1,0 +1,35 @@
+SELECT population_years.year, ROUND(MAX(population_years.population), 2) as 'max population', countries.name, countries.continent
+FROM population_years
+JOIN countries
+WHERE population_years.country_id = countries.id
+GROUP BY 1
+ORDER BY 1 ASC;
+
+SELECT countries.continent, 
+	ROUND(AVG(CASE WHEN population_years.year = 2000 THEN population_years.population END), 2) as 'avg pop 2000',
+    ROUND(AVG(CASE WHEN population_years.year = 2001 THEN population_years.population END), 2) as 'avg pop 2001',
+    ROUND(AVG(CASE WHEN population_years.year = 2002 THEN population_years.population END), 2) as 'avg pop 2002',
+	ROUND(AVG(CASE WHEN population_years.year = 2003 THEN population_years.population END), 2) as 'avg pop 2003',
+	ROUND(AVG(CASE WHEN population_years.year = 2004 THEN population_years.population END), 2) as 'avg pop 2004',
+	ROUND(AVG(CASE WHEN population_years.year = 2005 THEN population_years.population END), 2) as 'avg pop 2005',
+	ROUND(AVG(CASE WHEN population_years.year = 2006 THEN population_years.population END), 2) as 'avg pop 2006',
+	ROUND(AVG(CASE WHEN population_years.year = 2007 THEN population_years.population END), 2) as 'avg pop 2007',
+	ROUND(AVG(CASE WHEN population_years.year = 2008 THEN population_years.population END), 2) as 'avg pop 2008',
+	ROUND(AVG(CASE WHEN population_years.year = 2009 THEN population_years.population END), 2) as 'avg pop 2009',
+	ROUND(AVG(CASE WHEN population_years.year = 2010 THEN population_years.population END), 2) as 'avg pop 2010'
+FROM countries 
+JOIN population_years 
+WHERE population_years.country_id = countries.id
+GROUP BY 1;
+
+WITH avg_pop AS( SELECT countries.continent, 
+ROUND(AVG(CASE WHEN population_years.year = 2000 THEN population_years.population END), 2) as [avg pop 2000],
+ROUND(AVG(CASE WHEN population_years.year = 2010 THEN population_years.population END), 2) as [avg pop 2010]
+FROM countries 
+JOIN population_years 
+WHERE population_years.country_id = countries.id
+GROUP BY 1)
+
+SELECT continent, ROUND((([avg pop 2010] - [avg pop 2000])/[avg pop 2010])*100.0, 2) AS [%diff]
+FROM avg_pop
+ORDER BY [%diff] DESC;
